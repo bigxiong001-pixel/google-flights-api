@@ -1,10 +1,11 @@
-# Google Flights API (no API key): flight prices, fare calendar and price alerts
+# Google Flights API (no API key): flight prices, cheapest destinations, fare calendar and price alerts
 
 Google shut down its flight search API (QPX Express) in 2018 and has no public API for Google Flights results. This repo shows how to get Google Flights data as JSON anyway, through the **[Google Flights Scraper & Fare Monitor](https://apify.com/xpandalabs/google-flights-fare-monitor)** on Apify. You call it like an API from Python, JavaScript, cURL, n8n, Make or Zapier: **no Google API key, no airline or GDS account**.
 
 ## What you get
 
 - **Every flight** on a route and date: airline, flight numbers, departure and arrival times, duration, stops, layovers, aircraft, legroom, CO₂ and the total price for your passengers.
+- **Cheapest destinations (Explore)**: from any airport or city to anywhere (or one continent): every destination with its cheapest fare, dates, airline, stops and flight time, cheapest first. Fixed dates, or flexible dates where Google picks the cheapest time to go.
 - **Fare calendar**: the cheapest fare for each departure date, Google's verdict (**low / typical / high**), the typical price range and the 60-day price history. Find the cheapest day to fly.
 - **Price alerts**: price drops and rises since the previous run, and fares at or below your target price. With `onlyChanges` you only get, and only pay for, fares that moved.
 - One-way and round trips, adults and children, economy to first class, stop and airline filters, 15 currency presets.
@@ -19,6 +20,7 @@ Google shut down its flight search API (QPX Express) in 2018 and has no public A
 | Example | What it does |
 |---|---|
 | [`examples/python/quickstart.py`](examples/python/quickstart.py) | Nonstop flights JFK → LAX, cheapest first |
+| [`examples/python/cheapest_destinations.py`](examples/python/cheapest_destinations.py) | Cheapest places to fly from London in Europe, flexible dates |
 | [`examples/python/fare_calendar.py`](examples/python/fare_calendar.py) | Cheapest day to fly London → New York in the next 30 days |
 | [`examples/python/price_drop_alert.py`](examples/python/price_drop_alert.py) | Daily fare alert with a target price |
 | [`examples/javascript/quickstart.mjs`](examples/javascript/quickstart.mjs) | Node.js: London → New York in GBP |
@@ -40,7 +42,7 @@ for f in client.dataset(run["defaultDatasetId"]).iterate_items():
 
 ## Output
 
-Real rows from the Actor: [`sample-output/flight-row.json`](sample-output/flight-row.json) (one flight) and [`sample-output/fare-calendar-row.json`](sample-output/fare-calendar-row.json) (one route and date).
+Real rows from the Actor: [`sample-output/flight-row.json`](sample-output/flight-row.json) (one flight) and [`sample-output/fare-calendar-row.json`](sample-output/fare-calendar-row.json) (one route and date) and [`sample-output/destination-row.json`](sample-output/destination-row.json) (one Explore destination).
 
 | Field | Meaning |
 |---|---|
@@ -50,6 +52,7 @@ Real rows from the Actor: [`sample-output/flight-row.json`](sample-output/flight
 | `cheapestPrice`, `priceLevel`, `priceHistory` | Fare calendar rows (`"outputMode": "cheapest"`) |
 | `changeType`, `previousPrice`, `priceChangePct`, `lowestPriceSeen`, `belowTargetPrice` | Changes since the previous run and target-price alert |
 | `segments[]`, `googleFlightsUrl` | Each leg in detail, and the search on Google Flights |
+| `destination`, `country`, `destinationAirport`, `rank`, `departDate`, `returnDate` | Explore rows (`exploreFrom`): one per destination, cheapest first |
 
 ## Main inputs
 
@@ -61,6 +64,7 @@ Real rows from the Actor: [`sample-output/flight-row.json`](sample-output/flight
 | `datesToCheck`, `dateStepDays` | `30`, `1` (many departure dates in one run) |
 | `adults`, `children`, `cabin` | `2`, `1`, `"business"` |
 | `maxStops`, `airlines` | `"nonstop"`, `["DL", "United"]` |
+| `exploreFrom`, `exploreTo`, `flexibleDates`, `maxDestinations` | `["London"]`, `["europe"]`, `true`, `50` (Explore: cheapest destinations) |
 | `outputMode` | `"flights"` (every flight) or `"cheapest"` (fare calendar) |
 | `region` or `currency` | `"GB"`, `"JP"`, `"HK"`, ... or `"EUR"` |
 | `targetPrice`, `onlyChanges` | `700`, `true` |
@@ -69,7 +73,7 @@ Full reference: [input schema](https://apify.com/xpandalabs/google-flights-fare-
 
 ## Pricing
 
-Pay per result, no start fee: **$1 per 1,000 flights**, or **$2 per 1,000 fare-calendar rows**. Paid Apify plans get up to 30% off. Set a maximum cost per run and the Actor stops at that limit. Details on the [pricing page](https://apify.com/xpandalabs/google-flights-fare-monitor/pricing).
+Pay per result, no start fee: **$1 per 1,000 flights** or Explore destinations, or **$2 per 1,000 fare-calendar rows**. Paid Apify plans get up to 30% off. Set a maximum cost per run and the Actor stops at that limit. Details on the [pricing page](https://apify.com/xpandalabs/google-flights-fare-monitor/pricing).
 
 ## AI agents and MCP
 

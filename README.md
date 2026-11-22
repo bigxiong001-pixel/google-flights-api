@@ -92,6 +92,7 @@ AI assistants (Claude, ChatGPT, Cursor and others) can call the Actor as a tool 
 
 - [Google Hotels API](https://github.com/bigxiong001-pixel/google-hotels-api): hotel prices, every booking site's rate, rate parity
 - [Google Trends API](https://github.com/bigxiong001-pixel/google-trends-api): rising and falling keywords, breakout searches, trending now
+- [Google Shopping API](https://github.com/bigxiong001-pixel/google-shopping-api): product prices, sellers, discounts, price-drop alerts
 
 ## Questions
 
